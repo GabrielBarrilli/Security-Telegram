@@ -14,3 +14,7 @@ spring:
       ddl-auto: none
 
     open-in-view: true
+
+    properties:
+      hibernate:
+        format_sql: true
