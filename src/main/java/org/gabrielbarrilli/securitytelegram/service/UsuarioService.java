@@ -7,6 +7,8 @@ import org.gabrielbarrilli.securitytelegram.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class UsuarioService {
@@ -27,11 +29,25 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Usuario updatePassword(Long id, String password) {
+    public Usuario updatePassword(Long id, String senhaAtual, String novaSenha, String confirmaSenha) {
+
+        if (!novaSenha.equals(confirmaSenha)) {
+            throw new RuntimeException("Nova senha não confere com confirmação de senha");
+        }
 
         Usuario user = buscarPorId(id);
-        user.setPassword(password);
+
+        if (!user.getPassword().equals(senhaAtual)) {
+            throw new RuntimeException("Sua senha não confere com a anterior");
+        }
+
+        user.setPassword(novaSenha);
 
         return user;
+    }
+
+    public List<Usuario> getAll() {
+
+        return usuarioRepository.findAll();
     }
 }
