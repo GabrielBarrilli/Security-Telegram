@@ -1,0 +1,6 @@
+jpa:
+  open-in-view: true
+
+  properties:
+    hibernate:
+      format_sql: true

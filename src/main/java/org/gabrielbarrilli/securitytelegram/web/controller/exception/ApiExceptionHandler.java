@@ -55,4 +55,16 @@ public class ApiExceptionHandler {
                 .contentType(APPLICATION_JSON)
                 .body(new ErrorMessage(request, NOT_FOUND, ex.getMessage()));
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorMessage> runTimeException(RuntimeException ex,
+                                                                HttpServletRequest request) {
+
+        log.error("Api error - ", ex);
+
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .contentType(APPLICATION_JSON)
+                .body(new ErrorMessage(request, BAD_REQUEST, ex.getMessage()));
+    }
 }
