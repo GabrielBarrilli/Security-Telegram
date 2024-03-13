@@ -1,5 +1,10 @@
 package org.gabrielbarrilli.securitytelegram.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.gabrielbarrilli.securitytelegram.model.Usuario;
@@ -8,6 +13,7 @@ import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioResponseDto;
 import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioSenhaDto;
 import org.gabrielbarrilli.securitytelegram.model.dto.mapper.UsuarioMapper;
 import org.gabrielbarrilli.securitytelegram.service.UsuarioService;
+import org.gabrielbarrilli.securitytelegram.web.controller.exception.ErrorMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +21,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+@Tag(name = "Usuarios", description = "Operações relativas ao crud de um usuário")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/usuarios")
@@ -22,6 +29,17 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
+    @Operation(
+            summary = "Criar um novo usuário", description = "Criar um novo usuário",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))),
+                    @ApiResponse(responseCode = "409", description = "Usuario já cadastrado no sistema",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "422", description = "Dados de entrada inválidos",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            }
+    )
     @PostMapping("/create")
     public ResponseEntity<UsuarioResponseDto> create(@Valid @RequestBody UsuarioCreateDto dto) {
 
@@ -31,6 +49,15 @@ public class UsuarioController {
                 .body(UsuarioMapper.toDto(user));
     }
 
+    @Operation(
+            summary = "Buscar usuário por id", description = "Buscar usuário por id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Usuario encontrado",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuario não encontrado",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            }
+    )
     @GetMapping("/getById/{id}")
     public ResponseEntity<UsuarioResponseDto> getById(@PathVariable Long id) {
 
@@ -39,6 +66,13 @@ public class UsuarioController {
         return ResponseEntity.ok(UsuarioMapper.toDto(user));
     }
 
+    @Operation(
+            summary = "Listar todos os usuários", description = "Listar todos os usuários",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de Usuários",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class)))
+            }
+    )
     @GetMapping("/getAll")
     public ResponseEntity<List<UsuarioResponseDto>> getAll() {
 
@@ -47,6 +81,17 @@ public class UsuarioController {
         return ResponseEntity.ok(UsuarioMapper.toListDto(users));
     }
 
+    @Operation(
+            summary = "Alterar senha", description = "Alterar senha do Usuário",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Senha alterada",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "400", description = "Senha não confere",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            }
+    )
     @PatchMapping("/updatePassword/{id}")
     public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UsuarioSenhaDto dto) {
 

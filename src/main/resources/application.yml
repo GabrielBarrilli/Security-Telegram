@@ -1,4 +1,3 @@
-#LOCALE
 spring:
   web:
     locale-resolver: fixed
@@ -18,3 +17,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+springdoc:
+  swagger-ui:
+    path: /docs-park.html
+
+  api-docs:
+    path: /docs-park
+
+  packages-to-scan: org.gabrielbarrilli.securitytelegram.web.controller
