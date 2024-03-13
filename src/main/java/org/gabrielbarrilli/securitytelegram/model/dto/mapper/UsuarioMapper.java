@@ -6,6 +6,9 @@ import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class UsuarioMapper {
     
     public static Usuario toUsuario(UsuarioCreateDto dto) {
@@ -24,5 +27,9 @@ public class UsuarioMapper {
         ModelMapper mapper = new ModelMapper();
         mapper.addMappings(props);
         return mapper.map(usuario, UsuarioResponseDto.class);
+    }
+
+    public static List<UsuarioResponseDto> toListDto(List<Usuario> usuarios) {
+        return usuarios.stream().map(UsuarioMapper::toDto).collect(Collectors.toList());
     }
 }

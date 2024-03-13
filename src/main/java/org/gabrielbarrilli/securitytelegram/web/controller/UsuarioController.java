@@ -1,5 +1,6 @@
 package org.gabrielbarrilli.securitytelegram.web.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.gabrielbarrilli.securitytelegram.model.Usuario;
 import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioCreateDto;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,7 +23,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping("/create")
-    public ResponseEntity<UsuarioResponseDto> create(@RequestBody UsuarioCreateDto dto) {
+    public ResponseEntity<UsuarioResponseDto> create(@Valid @RequestBody UsuarioCreateDto dto) {
 
         Usuario user = usuarioService.salvar(UsuarioMapper.toUsuario(dto));
 
@@ -40,18 +40,20 @@ public class UsuarioController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Usuario>> getAll() {
+    public ResponseEntity<List<UsuarioResponseDto>> getAll() {
 
         List<Usuario> users = usuarioService.getAll();
 
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(UsuarioMapper.toListDto(users));
     }
 
     @PatchMapping("/updatePassword/{id}")
-    public ResponseEntity<Usuario> updatePassword(@PathVariable Long id, @RequestBody UsuarioSenhaDto dto) {
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UsuarioSenhaDto dto) {
 
         Usuario user = usuarioService.updatePassword(id, dto.getSenhaAtual(), dto.getNovaSenha(), dto.getConfirmaSenha());
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.noContent().build();
     }
+
+
 }

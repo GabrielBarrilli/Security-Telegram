@@ -1,4 +1,4 @@
-package org.gabrielbarrilli.securitytelegram.timeConfig;
+package org.gabrielbarrilli.securitytelegram.configuration;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;

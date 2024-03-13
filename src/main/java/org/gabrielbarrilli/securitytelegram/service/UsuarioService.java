@@ -1,9 +1,11 @@
 package org.gabrielbarrilli.securitytelegram.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.gabrielbarrilli.securitytelegram.exception.EntityNotFoundException;
+import org.gabrielbarrilli.securitytelegram.exception.UsernameUniqueViolationException;
 import org.gabrielbarrilli.securitytelegram.model.Usuario;
 import org.gabrielbarrilli.securitytelegram.repository.UsuarioRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,17 +17,22 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
+
     @Transactional
     public Usuario salvar(Usuario usuario) {
+        try {
+            return usuarioRepository.save(usuario);
+        } catch (DataIntegrityViolationException ex) {
+            throw new UsernameUniqueViolationException(String.format("Username {%s} já cadastrado", usuario.getUsername()));
+        }
 
-        return usuarioRepository.save(usuario);
     }
 
     @Transactional(readOnly = true)
     public Usuario buscarPorId(Long id) {
 
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Usuário %s não encontrado." , id)));
     }
 
     @Transactional
