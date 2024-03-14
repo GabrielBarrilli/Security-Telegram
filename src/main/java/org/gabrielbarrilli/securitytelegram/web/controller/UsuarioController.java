@@ -13,7 +13,7 @@ import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioResponseDto;
 import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioSenhaDto;
 import org.gabrielbarrilli.securitytelegram.model.dto.mapper.UsuarioMapper;
 import org.gabrielbarrilli.securitytelegram.service.UsuarioService;
-import org.gabrielbarrilli.securitytelegram.web.controller.exception.ErrorMessage;
+import org.gabrielbarrilli.securitytelegram.web.exception.ErrorMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

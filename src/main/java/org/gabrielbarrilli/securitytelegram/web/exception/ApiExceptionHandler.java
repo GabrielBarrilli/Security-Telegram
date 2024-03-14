@@ -1,11 +1,9 @@
-package org.gabrielbarrilli.securitytelegram.web.controller.exception;
+package org.gabrielbarrilli.securitytelegram.web.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.gabrielbarrilli.securitytelegram.exception.EntityNotFoundException;
 import org.gabrielbarrilli.securitytelegram.exception.UsernameUniqueViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
