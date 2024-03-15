@@ -21,19 +21,18 @@ public class JwtUtils {
     public static final String SECRET_KEY = "0123456789-0123456789-0123456789";
     public static final long EXPIRE_DAYS = 0;
     public static final long EXPIRE_HOURS = 0;
-    public static final long EXPIRE_MINUTES = 2;
+    public static final long EXPIRE_MINUTES = 30;
 
-    private JwtUtils() {
+    private JwtUtils(){
     }
 
-    private static Key genereteKey() {
+    private static Key generateKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
     private static Date toExpireDate(Date start) {
         LocalDateTime dateTime = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime end = dateTime.plusDays(EXPIRE_DAYS).plusHours(EXPIRE_HOURS).plusMinutes(EXPIRE_MINUTES);
-
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
     }
 
@@ -46,7 +45,7 @@ public class JwtUtils {
                 .setSubject(username)
                 .setIssuedAt(issuedAt)
                 .setExpiration(limit)
-                .signWith(genereteKey(), SignatureAlgorithm.HS256)
+                .signWith(generateKey(), SignatureAlgorithm.HS256)
                 .claim("role", role)
                 .compact();
 
@@ -56,12 +55,11 @@ public class JwtUtils {
     private static Claims getClaimsFromToken(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(genereteKey()).build()
+                    .setSigningKey(generateKey()).build()
                     .parseClaimsJws(refactorToken(token)).getBody();
         } catch (JwtException ex) {
             log.error(String.format("Token invalido %s", ex.getMessage()));
         }
-
         return null;
     }
 
@@ -72,13 +70,12 @@ public class JwtUtils {
     public static boolean isTokenValid(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(genereteKey()).build()
+                    .setSigningKey(generateKey()).build()
                     .parseClaimsJws(refactorToken(token));
             return true;
         } catch (JwtException ex) {
             log.error(String.format("Token invalido %s", ex.getMessage()));
         }
-
         return false;
     }
 
@@ -89,3 +86,4 @@ public class JwtUtils {
         return token;
     }
 }
+

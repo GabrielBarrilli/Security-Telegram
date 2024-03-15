@@ -1,5 +1,6 @@
 package org.gabrielbarrilli.securitytelegram.configuration;
 
+import org.gabrielbarrilli.securitytelegram.jwt.JwtAuthenticationEntryPoint;
 import org.gabrielbarrilli.securitytelegram.jwt.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +17,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableMethodSecurity
-@Configuration
 @EnableWebMvc
+@Configuration
 public class SpringSecurityConfig {
+
+    public static final String[] DOCUMENTATION_OPENAPI = {
+            "/docs/index.html",
+            "/docs-park.html" , "/docs-park/**",
+            "/v3/api-docs/**",
+            "/swagger-ui-custom.hmtl", "/swagger-ui.html", "/swagger-ui/**",
+            "/**.html", "/webjars/**", "/configuration/**", "/swagger-resources/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,14 +36,16 @@ public class SpringSecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "api/v1/usuarios/create").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/v1/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
+                        .requestMatchers(DOCUMENTATION_OPENAPI).permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).addFilterBefore(
                         jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class
-                )
+                ).exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
                 .build();
     }
 
@@ -42,6 +53,7 @@ public class SpringSecurityConfig {
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

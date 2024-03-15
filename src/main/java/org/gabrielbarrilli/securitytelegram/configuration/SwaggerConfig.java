@@ -10,13 +10,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public OpenAPI openAPI(){
-
+    public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(
                         new Info()
                                 .title("REST API - Spring Park")
-                                .description("Api para gestão de estacionamento")
+                                .description("API para gestão de estacionamento de veículos")
                                 .version("v1")
                                 .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0"))
                                 .contact(new Contact().name("Gabriel").email("gabriel@gmail.com"))

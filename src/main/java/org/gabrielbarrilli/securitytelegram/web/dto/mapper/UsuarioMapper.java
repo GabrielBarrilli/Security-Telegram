@@ -1,8 +1,8 @@
-package org.gabrielbarrilli.securitytelegram.model.dto.mapper;
+package org.gabrielbarrilli.securitytelegram.web.dto.mapper;
 
 import org.gabrielbarrilli.securitytelegram.model.Usuario;
-import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioCreateDto;
-import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioResponseDto;
+import org.gabrielbarrilli.securitytelegram.web.dto.UsuarioCreateDto;
+import org.gabrielbarrilli.securitytelegram.web.dto.UsuarioResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 

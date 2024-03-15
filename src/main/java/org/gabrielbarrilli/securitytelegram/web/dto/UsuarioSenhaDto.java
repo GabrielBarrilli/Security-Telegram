@@ -1,4 +1,4 @@
-package org.gabrielbarrilli.securitytelegram.model.dto;
+package org.gabrielbarrilli.securitytelegram.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

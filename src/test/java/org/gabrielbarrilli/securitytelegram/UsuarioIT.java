@@ -1,8 +1,8 @@
 package org.gabrielbarrilli.securitytelegram;
 
-import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioCreateDto;
-import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioResponseDto;
-import org.gabrielbarrilli.securitytelegram.model.dto.UsuarioSenhaDto;
+import org.gabrielbarrilli.securitytelegram.web.dto.UsuarioCreateDto;
+import org.gabrielbarrilli.securitytelegram.web.dto.UsuarioResponseDto;
+import org.gabrielbarrilli.securitytelegram.web.dto.UsuarioSenhaDto;
 import org.gabrielbarrilli.securitytelegram.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
