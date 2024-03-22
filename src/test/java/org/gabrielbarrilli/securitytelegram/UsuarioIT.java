@@ -141,6 +141,7 @@ public class UsuarioIT {
         UsuarioResponseDto responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios/getById/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(UsuarioResponseDto.class)
@@ -150,6 +151,34 @@ public class UsuarioIT {
         assertThat(responseBody.getId()).isEqualTo(100);
         assertThat(responseBody.getUsername()).isEqualTo("lara@email.com");
         assertThat(responseBody.getRole()).isEqualTo("ADMIN");
+
+        responseBody = webTestClient
+                .get()
+                .uri("/api/v1/usuarios/getById/101")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UsuarioResponseDto.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getId()).isEqualTo(101);
+        assertThat(responseBody.getUsername()).isEqualTo("laral@email.com");
+        assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
+
+        responseBody = webTestClient
+                .get()
+                .uri("/api/v1/usuarios/getById/101")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "laral@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UsuarioResponseDto.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getId()).isEqualTo(101);
+        assertThat(responseBody.getUsername()).isEqualTo("lara@email.com");
+        assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
     }
 
     @Test
