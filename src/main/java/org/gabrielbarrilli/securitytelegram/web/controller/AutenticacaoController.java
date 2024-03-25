@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gabrielbarrilli.securitytelegram.jwt.JwtToken;
 import org.gabrielbarrilli.securitytelegram.jwt.JwtUserDetailsService;
 import org.gabrielbarrilli.securitytelegram.web.dto.UsuarioLoginDto;
+import org.gabrielbarrilli.securitytelegram.web.dto.UsuarioResponseDto;
 import org.gabrielbarrilli.securitytelegram.web.exception.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,10 @@ public class AutenticacaoController {
 
     @Operation(summary = "Autenticar usuário", description = "Autenticar usuário por email e senha",
             responses = {
+                    @ApiResponse(responseCode = "200", description = "Autenticação bem sucedida com retorno de bearer token",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Credenciais inválidas",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "422", description = "Campo(s) invalido(s)",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
