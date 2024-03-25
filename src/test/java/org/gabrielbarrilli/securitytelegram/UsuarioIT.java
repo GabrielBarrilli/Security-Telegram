@@ -140,21 +140,21 @@ public class UsuarioIT {
     public void buscarUsuario_comIdExistente_retornarUsuarioComStatus200() {
         UsuarioResponseDto responseBody = webTestClient
                 .get()
-                .uri("/api/v1/usuarios/getById/100")
+                .uri("/api/v1/usuarios/100")
                 .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(UsuarioResponseDto.class)
                 .returnResult().getResponseBody();
 
-        assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getId()).isEqualTo(100);
-        assertThat(responseBody.getUsername()).isEqualTo("lara@email.com");
-        assertThat(responseBody.getRole()).isEqualTo("ADMIN");
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(100);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getUsername()).isEqualTo("lara@email.com");
+        org.assertj.core.api.Assertions.assertThat(responseBody.getRole()).isEqualTo("ADMIN");
 
         responseBody = webTestClient
                 .get()
-                .uri("/api/v1/usuarios/getById/101")
+                .uri("/api/v1/usuarios/101")
                 .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
@@ -168,7 +168,7 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .get()
-                .uri("/api/v1/usuarios/getById/101")
+                .uri("/api/v1/usuarios/101")
                 .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "laral@email.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
@@ -177,7 +177,7 @@ public class UsuarioIT {
 
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.getId()).isEqualTo(101);
-        assertThat(responseBody.getUsername()).isEqualTo("lara@email.com");
+        assertThat(responseBody.getUsername()).isEqualTo("laral@email.com");
         assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
     }
 
