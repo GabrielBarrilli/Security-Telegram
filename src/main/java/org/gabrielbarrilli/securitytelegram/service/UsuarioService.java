@@ -2,6 +2,7 @@ package org.gabrielbarrilli.securitytelegram.service;
 
 import lombok.RequiredArgsConstructor;
 import org.gabrielbarrilli.securitytelegram.exception.EntityNotFoundException;
+import org.gabrielbarrilli.securitytelegram.exception.PasswordInvalidException;
 import org.gabrielbarrilli.securitytelegram.exception.UsernameUniqueViolationException;
 import org.gabrielbarrilli.securitytelegram.model.Usuario;
 import org.gabrielbarrilli.securitytelegram.repository.UsuarioRepository;
@@ -53,13 +54,13 @@ public class UsuarioService {
     public Usuario updatePassword(Long id, String senhaAtual, String novaSenha, String confirmaSenha) {
 
         if (!novaSenha.equals(confirmaSenha)) {
-            throw new RuntimeException("Nova senha não confere com confirmação de senha");
+            throw new PasswordInvalidException("Nova senha não confere com confirmação de senha");
         }
 
         Usuario user = buscarPorId(id);
 
         if (!passwordEncoder.matches(senhaAtual, user.getPassword())) {
-            throw new RuntimeException("Sua senha não confere com a anterior");
+            throw new PasswordInvalidException("Sua senha não confere com a anterior");
         }
 
         user.setPassword(passwordEncoder.encode(novaSenha));

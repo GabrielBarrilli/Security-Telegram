@@ -25,7 +25,7 @@ public class UsuarioIT {
     public void createUsuario_comUsernameEPasswordValidos_retornarUsuarioCriadoComStatus201() {
         UsuarioResponseDto responseBody = webTestClient
                 .post()
-                .uri("/api/v1/usuarios/create")
+                .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("tody@email.com", "123456"))
                 .exchange()
@@ -43,7 +43,7 @@ public class UsuarioIT {
     public void createUsuario_comUsernameOuPasswordInvalidos_retornarErrorMessageStatus422() {
         ErrorMessage responseBody = webTestClient
                 .post()
-                .uri("/api/v1/usuarios/create")
+                .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("", "123456"))
                 .exchange()
@@ -56,7 +56,7 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .post()
-                .uri("/api/v1/usuarios/create")
+                .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("tody@", "123456"))
                 .exchange()
@@ -69,7 +69,7 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .post()
-                .uri("/api/v1/usuarios/create")
+                .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("tody@email", "123456"))
                 .exchange()
@@ -82,7 +82,7 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .post()
-                .uri("/api/v1/usuarios/create")
+                .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("tody@email.com", ""))
                 .exchange()
@@ -95,7 +95,7 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .post()
-                .uri("/api/v1/usuarios/create")
+                .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("tody@email.com", "12345"))
                 .exchange()
@@ -108,7 +108,7 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .post()
-                .uri("/api/v1/usuarios/create")
+                .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("tody@email.com", "1234567"))
                 .exchange()
@@ -124,7 +124,7 @@ public class UsuarioIT {
     public void createUsuario_comUsernameEPasswordValidos_retornarUsuarioCriadoComStatus409() {
         ErrorMessage responseBody = webTestClient
                 .post()
-                .uri("/api/v1/usuarios/create")
+                .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("lara@email.com", "123456"))
                 .exchange()
@@ -185,7 +185,8 @@ public class UsuarioIT {
     public void buscarUsuario_comIdInexistente_retornarUsuarioComStatus404() {
         ErrorMessage responseBody = webTestClient
                 .get()
-                .uri("/api/v1/usuarios/getById/0")
+                .uri("/api/v1/usuarios/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
                 .exchange()
                 .expectStatus().isEqualTo(404)
                 .expectBody(ErrorMessage.class)
@@ -196,10 +197,35 @@ public class UsuarioIT {
     }
 
     @Test
+    public void comUsuarioCliente_retornarErrorMessageComStatus403() {
+        ErrorMessage responseBody = webTestClient
+                .get()
+                .uri("/api/v1/usuarios/102")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "laral@email.com", "123456"))
+                .exchange()
+                .expectStatus().isEqualTo(403)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
+    @Test
     public void editarSenha_comDadosValidos_retornarStatus204() {
         webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/updatePassword/100")
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDto("123456", "654321", "654321"))
+                .exchange()
+                .expectStatus().isNoContent();
+
+        webTestClient
+                .patch()
+                .uri("/api/v1/usuarios/101")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "laral@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("123456", "654321", "654321"))
                 .exchange()
@@ -207,26 +233,42 @@ public class UsuarioIT {
     }
 
     @Test
-    public void editarSenha_comIdInexistente_retornarErrorMessageComStatus404() {
+    public void editarSenha_comUsuariosDiferentes_retornarErrorMessageComStatus403() {
         ErrorMessage responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/updatePassword/0")
+                .uri("/api/v1/usuarios/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("123456", "654321", "654321"))
                 .exchange()
-                .expectStatus().isNotFound()
+                .expectStatus().isForbidden()
                 .expectBody(ErrorMessage.class)
                 .returnResult().getResponseBody();
 
         assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getStatus()).isEqualTo(404);
+        assertThat(responseBody.getStatus()).isEqualTo(403);
+
+        responseBody = webTestClient
+                .patch()
+                .uri("/api/v1/usuarios/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "laral@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDto("123456", "654321", "654321"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(403);
     }
 
     @Test
     public void editarSenha_comCamposInvalidos_retornarStatus422() {
         ErrorMessage responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/updatePassword/100")
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("", "654321", "654321"))
                 .exchange()
@@ -239,7 +281,8 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/updatePassword/100")
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "laral@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("12345", "65432", "65432"))
                 .exchange()
@@ -252,7 +295,8 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/updatePassword/100")
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "laral@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("1234567", "6543210", "6543210"))
                 .exchange()
@@ -265,12 +309,13 @@ public class UsuarioIT {
     }
 
     @Test
-    public void editarSenha_comSenhasInvalidas_retornarStatus400() {
+    public void editarSenha_ComSenhaInvalidas_RetornarErrorMessageComStatus400() {
         ErrorMessage responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/updatePassword/100")
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new UsuarioSenhaDto("123456", "654321", "123456"))
+                .bodyValue(new UsuarioSenhaDto("123456", "123456", "000000"))
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectBody(ErrorMessage.class)
@@ -281,9 +326,10 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/updatePassword/100")
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "lara@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new UsuarioSenhaDto("654321", "654321", "654321"))
+                .bodyValue(new UsuarioSenhaDto("000000", "123456", "123456"))
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectBody(ErrorMessage.class)
@@ -291,7 +337,6 @@ public class UsuarioIT {
 
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.getStatus()).isEqualTo(400);
-
     }
 }
 
