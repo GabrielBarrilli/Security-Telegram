@@ -2,10 +2,7 @@ package org.gabrielbarrilli.securitytelegram.web.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.gabrielbarrilli.securitytelegram.exception.CpfUniqueViolationException;
-import org.gabrielbarrilli.securitytelegram.exception.EntityNotFoundException;
-import org.gabrielbarrilli.securitytelegram.exception.PasswordInvalidException;
-import org.gabrielbarrilli.securitytelegram.exception.UsernameUniqueViolationException;
+import org.gabrielbarrilli.securitytelegram.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +43,7 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
-    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class, CodigoUniqueValidationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex, HttpServletRequest request) {
         log.error("Api Error - ", ex);
         return ResponseEntity
