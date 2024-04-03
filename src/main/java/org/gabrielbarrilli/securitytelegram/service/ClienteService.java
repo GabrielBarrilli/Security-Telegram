@@ -22,12 +22,11 @@ public class ClienteService {
 
     @Transactional
     public Cliente salvar(Cliente cliente) {
-        try {
-            return clienteRepository.save(cliente);
-        } catch (DataIntegrityViolationException ex) {
+        if (clienteRepository.existsByCpf(cliente.getCpf())) {
             throw new CpfUniqueViolationException(
                     String.format("CPF '%s' já está cadastrado no sistema", cliente.getCpf()));
         }
+        return clienteRepository.save(cliente);
     }
 
     @Transactional(readOnly = true)
