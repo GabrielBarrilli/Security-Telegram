@@ -51,7 +51,7 @@ public class EstacionamentoService {
 
         long totalDeVezes = clienteVagaService.getTotalDeVezesEstacionamentoCompleto(clienteVaga.getCliente().getCpf());
 
-        BigDecimal desconto =        EstacionamentoUtils.calcularDesconto(valor, totalDeVezes);
+        BigDecimal desconto = EstacionamentoUtils.calcularDesconto(valor, totalDeVezes);
         clienteVaga.setDesconto(desconto);
 
         clienteVaga.setDataSaida(dataSaida);
@@ -59,7 +59,5 @@ public class EstacionamentoService {
 
         return clienteVagaService.salvar(clienteVaga);
     }
-
-//    @Transactional(readOnly = true)
 
 }

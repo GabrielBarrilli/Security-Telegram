@@ -8,13 +8,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.gabrielbarrilli.securitytelegram.jwt.JwtUserDetails;
 import org.gabrielbarrilli.securitytelegram.model.ClienteVaga;
 import org.gabrielbarrilli.securitytelegram.repository.projection.ClienteVagaProjection;
+import org.gabrielbarrilli.securitytelegram.service.ClienteService;
 import org.gabrielbarrilli.securitytelegram.service.ClienteVagaService;
 import org.gabrielbarrilli.securitytelegram.service.EstacionamentoService;
+import org.gabrielbarrilli.securitytelegram.service.JasperService;
 import org.gabrielbarrilli.securitytelegram.web.dto.EstacionamentoCreateDto;
 import org.gabrielbarrilli.securitytelegram.web.dto.EstacionamentoResponseDto;
 import org.gabrielbarrilli.securitytelegram.web.dto.PageableDto;
@@ -26,12 +29,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
@@ -44,6 +49,8 @@ public class EstacionamentoController {
 
     private final EstacionamentoService estacionamentoService;
     private final ClienteVagaService clienteVagaService;
+    private final ClienteService clienteService;
+    private final JasperService jasperService;
 
     @Operation(summary = "Operação de check-in", description = "Recurso para dar entrada de um veículo no estacionamento. " +
             "A requisição exige uso de um bearer token. Acesso restrito a Role = 'ADMIN'",
@@ -202,19 +209,30 @@ public class EstacionamentoController {
 
         return ResponseEntity.ok(dto);
     }
+
+    @Operation(summary = "Relatório em PDF com os estacionamentos do cliente",
+            description = "Recurso para gerar um relatório com os estacionamentos do cliente. " +
+                    "Requisição exige uso de um bearer token.",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Relatório gerado com sucesso",
+                            content = @Content(mediaType = "application/pdf",
+                                    schema = @Schema(implementation = EstacionamentoResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
+    @GetMapping("/relatorio")
+    public ResponseEntity<Void> getRelatorio(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException {
+        String cpf = clienteService.findByUsuarioId(user.getId()).getCpf();
+        jasperService.addParams("CPF", cpf);
+
+        byte[] bytes = jasperService.gerarPdf();
+
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        response.setHeader("Content-disposition", "inline; filename=" + System.currentTimeMillis() + ".pdf");
+        response.getOutputStream().write(bytes);
+
+        return ResponseEntity.ok().build();
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
