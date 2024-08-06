@@ -223,6 +223,7 @@ public class EstacionamentoController {
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping("/relatorio")
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<Void> getRelatorio(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException {
         String cpf = clienteService.findByUsuarioId(user.getId()).getCpf();
         jasperService.addParams("CPF", cpf);
