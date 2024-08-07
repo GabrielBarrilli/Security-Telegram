@@ -42,6 +42,7 @@ public class ClienteController {
 
     @Operation(summary = "Criar um novo cliente", description = "Recurso para criar novo cliente vinculado a um usuário cadastrado. " +
             "Requisição exige uso de um bearer token. Acesso restrito a Role = 'CLIENTE'",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso",
                             content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ClienteResponseDto.class))),
