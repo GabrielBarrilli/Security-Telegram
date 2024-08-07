@@ -34,6 +34,7 @@ public class VagaController {
 
     @Operation(summary = "Criar uma nova vaga", description = "Recurso para criar uma nova vaga. " +
             "Requisição exige uso de um bearer token. Acesso restrito a Role= 'ADMIN'. ",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso",
                             headers = @Header(name = HttpHeaders.LOCATION, description = "URL do recurso criado")),
@@ -60,6 +61,7 @@ public class VagaController {
 
     @Operation(summary = "Localizar uma vaga", description = "Recurso para achar uma vaga. " +
             "Requisição exige uso de um bearer token. Acesso restrito a Role= 'ADMIN'. ",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
