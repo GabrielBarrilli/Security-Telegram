@@ -41,11 +41,11 @@ public class RelatorioEstacionamentoService {
 
         var estacionamento = queryEstacionamentoService.buscarCpfClienteRelatorio(cpf);
 
-        EstacionamentoRelatorio estacionamentoRelatorio = estacionamentoRelatorioConvert(estacionamento);
+        List<EstacionamentoRelatorio> estacionamentoRelatorio = estacionamentoRelatorioConvert(estacionamento);
 
         List<EstacionamentoRelatorio> estacionamentoRelatorioList = new ArrayList<>();
 
-        estacionamentoRelatorioList.add(estacionamentoRelatorio);
+        estacionamentoRelatorioList.addAll(estacionamentoRelatorio);
 
         estacionamentoRelatorio = criaRelatorio(estacionamento);
 
@@ -55,64 +55,89 @@ public class RelatorioEstacionamentoService {
         printPDF(MODELO_RELATORIO_ESTACIONAMENTO, estacionamentoRelatorioList, fileName, PARAMETROS, response);
     }
 
-    private EstacionamentoRelatorio estacionamentoRelatorioConvert(QueryCpfClienteResponse estacionamento) {
+    private List<EstacionamentoRelatorio> estacionamentoRelatorioConvert(List<QueryCpfClienteResponse> estacionamento) {
 
-        return new EstacionamentoRelatorio(
-                estacionamento.cpf(),
-                estacionamento.nome(),
-                estacionamento.cor(),
-                estacionamento.desconto(),
-                estacionamento.marca(),
-                estacionamento.modelo(),
-                estacionamento.placa(),
-                estacionamento.numero_recibo(),
-                estacionamento.valor(),
-                estacionamento.codigo(),
-                estacionamento.data_entrada(),
-                estacionamento.data_saida(),
-                estacionamento.hours().longValue(),
-                estacionamento.minutes().longValue()
+        List<EstacionamentoRelatorio> estacionamentoRelatorioList = new ArrayList<>();
+
+        estacionamento.forEach(
+                estacionamentoRelatorio -> {
+                    estacionamentoRelatorioList.add(
+                            new EstacionamentoRelatorio(
+                                    estacionamentoRelatorio.cpf(),
+                                    estacionamentoRelatorio.nome(),
+                                    estacionamentoRelatorio.cor(),
+                                    estacionamentoRelatorio.desconto(),
+                                    estacionamentoRelatorio.marca(),
+                                    estacionamentoRelatorio.modelo(),
+                                    estacionamentoRelatorio.placa(),
+                                    estacionamentoRelatorio.numero_recibo(),
+                                    estacionamentoRelatorio.valor(),
+                                    estacionamentoRelatorio.codigo(),
+                                    estacionamentoRelatorio.data_entrada(),
+                                    estacionamentoRelatorio.data_saida(),
+                                    estacionamentoRelatorio.hours().longValue(),
+                                    estacionamentoRelatorio.minutes().longValue()
+                            )
+                    );
+                }
         );
+
+        return estacionamentoRelatorioList;
     }
 
-    private static EstacionamentoRelatorio criaRelatorio(QueryCpfClienteResponse clienteResponse) {
+    private static List<EstacionamentoRelatorio> criaRelatorio(List<QueryCpfClienteResponse> clienteResponseList) {
 
-        EstacionamentoRelatorio estacionamentoRelatorio = new EstacionamentoRelatorio();
-        estacionamentoRelatorio.setCpf(clienteResponse.cpf());
-        estacionamentoRelatorio.setNome(clienteResponse.nome());
-        estacionamentoRelatorio.setCor(clienteResponse.cor());
-        estacionamentoRelatorio.setDesconto(clienteResponse.desconto());
-        estacionamentoRelatorio.setMarca(clienteResponse.marca());
-        estacionamentoRelatorio.setModelo(clienteResponse.modelo());
-        estacionamentoRelatorio.setPlaca(clienteResponse.placa());
-        estacionamentoRelatorio.setNumero_recibo(clienteResponse.numero_recibo());
-        estacionamentoRelatorio.setValor(clienteResponse.valor());
-        estacionamentoRelatorio.setCodigo(clienteResponse.codigo());
-        estacionamentoRelatorio.setData_entrada(clienteResponse.data_entrada());
-        estacionamentoRelatorio.setData_saida(clienteResponse.data_saida());
-        estacionamentoRelatorio.setHours(clienteResponse.hours().longValue());
-        estacionamentoRelatorio.setMinutes(clienteResponse.minutes().longValue());
+        List<EstacionamentoRelatorio> estacionamentoRelatorioList = new ArrayList<>();
+        clienteResponseList.forEach(
+                clienteResponse -> {
+                    EstacionamentoRelatorio estacionamentoRelatorio1 = new EstacionamentoRelatorio();
 
-        return estacionamentoRelatorio;
+                    estacionamentoRelatorio1.setCpf(clienteResponse.cpf());
+                    estacionamentoRelatorio1.setNome(clienteResponse.nome());
+                    estacionamentoRelatorio1.setCor(clienteResponse.cor());
+                    estacionamentoRelatorio1.setDesconto(clienteResponse.desconto());
+                    estacionamentoRelatorio1.setMarca(clienteResponse.marca());
+                    estacionamentoRelatorio1.setModelo(clienteResponse.modelo());
+                    estacionamentoRelatorio1.setPlaca(clienteResponse.placa());
+                    estacionamentoRelatorio1.setNumero_recibo(clienteResponse.numero_recibo());
+                    estacionamentoRelatorio1.setValor(clienteResponse.valor());
+                    estacionamentoRelatorio1.setCodigo(clienteResponse.codigo());
+                    estacionamentoRelatorio1.setData_entrada(clienteResponse.data_entrada());
+                    estacionamentoRelatorio1.setData_saida(clienteResponse.data_saida());
+                    estacionamentoRelatorio1.setHours(clienteResponse.hours().longValue());
+                    estacionamentoRelatorio1.setMinutes(clienteResponse.minutes().longValue());
+
+                    estacionamentoRelatorioList.add(
+                            estacionamentoRelatorio1
+                    );
+                }
+        );
+
+        return estacionamentoRelatorioList;
     }
 
-    private void getParametros(Map<String, Object> parametros, BufferedImage parking, EstacionamentoRelatorio estacionamentoRelatorio) {
+    private void getParametros(Map<String, Object> parametros, BufferedImage parking, List<EstacionamentoRelatorio> estacionamentoRelatorioList) {
 
         parametros.put("parking", parking);
-        parametros.put("cpf", estacionamentoRelatorio.getCpf());
-        parametros.put("nome", estacionamentoRelatorio.getNome());
-        parametros.put("cor", estacionamentoRelatorio.getCor());
-        parametros.put("desconto", estacionamentoRelatorio.getDesconto());
-        parametros.put("marca", estacionamentoRelatorio.getMarca());
-        parametros.put("modelo", estacionamentoRelatorio.getModelo());
-        parametros.put("placa", estacionamentoRelatorio.getPlaca());
-        parametros.put("numero_recibo", estacionamentoRelatorio.getNumero_recibo());
-        parametros.put("valor", estacionamentoRelatorio.getValor());
-        parametros.put("codigo", estacionamentoRelatorio.getCodigo());
-        parametros.put("data_entrada", estacionamentoRelatorio.getData_entrada());
-        parametros.put("data_saida", estacionamentoRelatorio.getData_saida());
-        parametros.put("hours", estacionamentoRelatorio.getHours());
-        parametros.put("minutes", estacionamentoRelatorio.getMinutes());
+        parametros.put("cpf", estacionamentoRelatorioList.get(0).getCpf());
+        parametros.put("nome", estacionamentoRelatorioList.get(0).getNome());
+        parametros.put("cor", estacionamentoRelatorioList.get(0).getCor());
+        estacionamentoRelatorioList.forEach(
+                estacionamentoRelatorio -> {
+                    parametros.put("desconto", estacionamentoRelatorio.getDesconto());
+                    parametros.put("marca", estacionamentoRelatorio.getMarca());
+                    parametros.put("modelo", estacionamentoRelatorio.getModelo());
+                    parametros.put("placa", estacionamentoRelatorio.getPlaca());
+                    parametros.put("numero_recibo", estacionamentoRelatorio.getNumero_recibo());
+                    parametros.put("valor", estacionamentoRelatorio.getValor());
+                    parametros.put("codigo", estacionamentoRelatorio.getCodigo());
+                    parametros.put("data_entrada", estacionamentoRelatorio.getData_entrada());
+                    parametros.put("data_saida", estacionamentoRelatorio.getData_saida());
+                    parametros.put("hours", estacionamentoRelatorio.getHours());
+                    parametros.put("minutes", estacionamentoRelatorio.getMinutes());
+                }
+        );
+
     }
 
     private void printPDF(String jasperPath, List<?> dataSource, String fileName, Map<String, Object> parametros, HttpServletResponse response) throws Exception {
