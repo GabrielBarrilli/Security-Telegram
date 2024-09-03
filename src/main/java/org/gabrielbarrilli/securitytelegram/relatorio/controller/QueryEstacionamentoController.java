@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/relatorio")
+@RequestMapping("/api/v1/relatorio")
 public class QueryEstacionamentoController {
 
     private final RelatorioEstacionamentoService relatorioEstacionamentoService;

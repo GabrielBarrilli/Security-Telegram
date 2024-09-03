@@ -4,7 +4,7 @@ spring:
     locale: pt_BR
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/Demo-Park-Telegram
+    url: jdbc:postgresql://172.23.71.93:5432/Demo-Park-Telegram
     username: postgres
     password: root
 
